@@ -16,7 +16,7 @@ Future<void> overwriteInfoPlist(String name) async {
       // Check the next line is the string value line
       if (lines[x + 1].trim().startsWith('<string>') &&
           lines[x + 1].trim().endsWith('</string>')) {
-        lines[x + 1] = '<string>$name</string>'; // Replace the value line
+        lines[x + 1] = '\t\t<string>$name</string>'; // Replace the value line
         requireChange = true;
         break;
       }
