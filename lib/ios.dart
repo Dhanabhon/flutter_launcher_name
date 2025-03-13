@@ -8,20 +8,17 @@ Future<void> overwriteInfoPlist(String name) async {
   final File iOSInfoPlistFile = File(constants.iOSInfoPlistFile);
   final List<String> lines = await iOSInfoPlistFile.readAsLines();
 
-  // there is no plist parser...
-  // this is not good way
   bool requireChange = false;
   for (int x = 0; x < lines.length; x++) {
     String line = lines[x];
     if (line.contains('CFBundleName')) {
-      requireChange = true;
-      continue;
-    }
-
-    if (requireChange) {
       lines[x] = '	<string>$name</string>';
-      requireChange = false;
+      requireChange = true;
+      break;
     }
   }
-  iOSInfoPlistFile.writeAsString(lines.join('\n'));
+
+  if (requireChange) {
+    await iOSInfoPlistFile.writeAsString(lines.join('\n'));
+  }
 }
