@@ -11,14 +11,19 @@ Future<void> overwriteInfoPlist(String name) async {
   bool requireChange = false;
   for (int x = 0; x < lines.length; x++) {
     String line = lines[x];
-    if (line.contains('CFBundleName')) {
-      lines[x] = '	<string>$name</string>';
-      requireChange = true;
-      break;
+    // Check for the exact key line
+    if (line.trim() == '<key>CFBundleDisplayName</key>') {
+      // Check the next line is the string value line
+      if (lines[x + 1].trim().startsWith('<string>') &&
+          lines[x + 1].trim().endsWith('</string>')) {
+        lines[x + 1] = '<string>$name</string>'; // Replace the value line
+        requireChange = true;
+        break;
+      }
     }
   }
 
   if (requireChange) {
-    await iOSInfoPlistFile.writeAsString(lines.join('\n'));
+    await iOSInfoPlistFile.writeAsString(lines.join('\n'), flush: true);
   }
 }
